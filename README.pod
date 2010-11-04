@@ -1,0 +1,79 @@
+=head1 MailMan archive migration tools
+
+=head2 INTRODUCTION
+
+This is a set of scripts to assist in migrating archives from a MailMan mailing
+list into another system.  It was originally written to export to Google Groups
+via SMTP delivery but it should work with any SMTP-routable list management
+system.
+
+=head2 ABOUT
+
+MailMan's primary archival mechanism is mbox files, but it appears a bug
+L<[1]|/[1]> was introduced at some point which results in improper formatting of
+those files.  The problems include:
+
+=over
+
+=item *
+
+Occasional omission of the required extra newline before the "From" message
+separater line, leading to run-together messages
+
+=item *
+
+Occurrences of "From" at the beginning of lines in the body are not escaped,
+possibly causing messages to be split erroneously.
+
+=back
+
+There are some recipes and scripts out there to solve some of these problems
+(e.g. L<[2]|/[2]>) but they seem either overly complex or incomplete.
+
+=head2 IMPLEMENTATION
+
+The current solution consists of one perl script to clean up the message
+separators, and one shell script to pipe the resulting output through formail
+and sendmail.  The perl script does read the whole mbox file into memory at
+once (due to laziness -- this should be fixed) so big archives could be a
+problem.
+
+=head2 USAGE
+
+migrate_smtp.sh is the front-end script that does everything.  Pass it the path to the mbox archive file and the address of the new mailing list:
+
+=over
+
+  ./migrate_smtp.sh oldlist.mbox newlist@example.com
+
+=back
+
+You can run filter.pl on the mbox file first and compare the output to the
+original file to preview the changes before actually sending any mail:
+
+=over
+
+  perl filter.pl oldlist.mbox | diff -u oldlist.mbox -
+
+=back
+
+NOTE: It would probably be wise to disable message delivery for the receiving
+list before migrating the archive, or perform the migration before any
+subscribers are added to the receiving list.  Otherwise all subscribers of the
+receiving list will receive a copy of all archived messages, which could amount
+to a substantial amount of mail for an old or large list.
+
+=head2 FOOTNOTES
+
+=over
+
+=item [1]
+
+http://mail.python.org/pipermail/mailman-developers/2003-April/015017.html
+
+=item [2]
+
+http://wiki.list.org/display/DOC/Processing+old+mbox+archives+with+procmail-formail
+
+=back
+
