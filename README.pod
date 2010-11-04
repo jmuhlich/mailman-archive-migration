@@ -30,23 +30,34 @@ possibly causing messages to be split erroneously.
 There are some recipes and scripts out there to solve some of these problems
 (e.g. L<[2]|/[2]>) but they seem either overly complex or incomplete.
 
+In addition, Google Groups seems to thread messages incorrectly when an archive
+is blasted through all at once.  The default migration script introduces a
+two-second delay between messages to help alleviate this.
+
 =head2 IMPLEMENTATION
 
 The current solution consists of one perl script to clean up the message
-separators, and one shell script to pipe the resulting output through formail
-and sendmail.  The perl script does read the whole mbox file into memory at
-once (due to laziness -- this should be fixed) so big archives could be a
-problem.
+separators (filter.pl), one shell script to pipe the resulting output through formail (migrate_smtp.sh), and
+another shell script to introduce the delay and call sendmail (send.sh).  The
+perl script does read the whole mbox file into memory at once (due to laziness
+-- this should be fixed) so big archives could be a problem.
+
+There are also a few other scripts to aid in debugging and testing the process.
 
 =head2 USAGE
 
-migrate_smtp.sh is the front-end script that does everything.  Pass it the path to the mbox archive file and the address of the new mailing list:
+migrate_smtp.sh is the front-end script that does everything.  Pass it the path
+to the mbox archive file and the address of the new mailing list:
 
 =over
 
   ./migrate_smtp.sh oldlist.mbox newlist@example.com
 
 =back
+
+Note that it will pause for two seconds between messages.  Edit send.sh if you
+want to modify that, but beware that Google Groups seems to require the delay
+in order to prevent it from getting confused about message thread order.
 
 You can run filter.pl on the mbox file first and compare the output to the
 original file to preview the changes before actually sending any mail:

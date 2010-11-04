@@ -11,4 +11,4 @@ if [ -z "$MBOX" -o -z "$LIST" ]; then
   exit 1
 fi
 
-perl filter.pl $MBOX | formail -s sendmail $LIST
+perl filter.pl $MBOX | formail -s ./send.sh $LIST
