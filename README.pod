@@ -74,6 +74,23 @@ subscribers are added to the receiving list.  Otherwise all subscribers of the
 receiving list will receive a copy of all archived messages, which could amount
 to a substantial amount of mail for an old or large list.
 
+NOTE2: Some groups may disable posting from non members of the group, which
+will prevent posts from non-members of the group to appear in the Google Group
+archives. This will happen if there were people who posted to a mailing-list
+and have now left the organization, such that they are not members of the
+Google Groups.
+
+On top of temporarily turning off email delivery for the receiving group, you
+might want to turn on Public posting (Permissions -> Posting permissions ->
+Check the Public option). Not doing so will typically result in former members
+of the mailing-list to not appear, which could mangle the topics/conversations
+significantly.
+
+NOTE3: SMTP migration will preserve the order of the messages relative to each
+other but the original dates and times as they appear in the mailman archive
+will be completely lost, since Google Groups will be receiving these messages
+at the time you migrate them via SMTP.
+
 =head2 FOOTNOTES
 
 =over
